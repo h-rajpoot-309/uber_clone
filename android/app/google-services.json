@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "31672078104",
+    "firebase_url": "https://uber-e4a97-default-rtdb.firebaseio.com",
+    "project_id": "uber-e4a97",
+    "storage_bucket": "uber-e4a97.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:31672078104:android:a572938fc21ead21ca186d",
+        "android_client_info": {
+          "package_name": "com.example.uber_clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAnHdwvzGYIzwlRJYdTgAlV7-JhJXM4ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
