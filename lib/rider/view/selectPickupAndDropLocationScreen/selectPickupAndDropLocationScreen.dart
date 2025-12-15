@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:uber_clone/common/controller/provider/locationProvider.dart';
+import 'package:uber_clone/common/controller/services/directionServices.dart';
 import 'package:uber_clone/common/controller/services/locationServices.dart';
 import 'package:uber_clone/common/model/pickupNDropLocationModel.dart';
 import 'package:uber_clone/common/model/searchAddressModel.dart';
@@ -48,10 +49,10 @@ class _PickupAndDropLocationScreenState
     });
   }
 
-  navigateToBookRideScreen() {
+  navigateToBookRideScreen() async {
     if (context.read<LocationProvider>().pickupLocation != null &&
         context.read<LocationProvider>().dropLocation != null) {
-      PickupNDropLocationModel? pickup = context
+      PickupNDropLocationModel pickup = context
           .read<LocationProvider>()
           .pickupLocation!;
       PickupNDropLocationModel drop = context
@@ -61,6 +62,16 @@ class _PickupAndDropLocationScreenState
         pickup,
         drop,
       );
+      LatLng pickupLocation = LatLng(pickup.latitude!, pickup.longitude!);
+      LatLng dropLocation = LatLng(drop.latitude!, drop.longitude!);
+      await DirectionServices.getDirectionDetails(
+        pickupLocation,
+        dropLocation,
+        context,
+      );
+      context
+          .read<RideRequestProvider>()
+          .decodePolylineAndUpdatePolylineField();
       Navigator.push(
         context,
         PageTransition(
@@ -136,6 +147,9 @@ class _PickupAndDropLocationScreenState
                               decoration: InputDecoration(
                                 suffixIcon: InkWell(
                                   onTap: () {
+                                    context
+                                        .read<LocationProvider>()
+                                        .nullifyPickupLocation();
                                     pickupLocationController.clear();
                                   },
                                   child: Icon(
@@ -186,6 +200,9 @@ class _PickupAndDropLocationScreenState
                               decoration: InputDecoration(
                                 suffixIcon: InkWell(
                                   onTap: () {
+                                    context
+                                        .read<LocationProvider>()
+                                        .nullifyDropLocation();
                                     dropLocationController.clear();
                                   },
                                   child: Icon(
@@ -245,6 +262,11 @@ class _PickupAndDropLocationScreenState
                   return ListTile(
                     onTap: () async {
                       log(currentAddress.toMap().toString());
+                      if (locationType == 'DROP') {
+                        dropLocationController.text = currentAddress.mainName;
+                      } else {
+                        pickupLocationController.text = currentAddress.mainName;
+                      }
                       await LocationServices.getLatLngFromPlaceID(
                         currentAddress,
                         context,

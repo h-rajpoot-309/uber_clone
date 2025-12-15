@@ -8,6 +8,10 @@ import 'package:uber_clone/common/model/pickupNDropLocationModel.dart';
 import '../../../../common/model/directionModel.dart';
 
 class RideRequestProvider extends ChangeNotifier {
+  CameraPosition initialCameraPosition = const CameraPosition(
+    target: LatLng(37.4, -122),
+    zoom: 14.4746,
+  );
   Set<Marker> riderMarker = Set<Marker>();
   Set<Polyline> polylineSet = {};
   Polyline? polyline;
