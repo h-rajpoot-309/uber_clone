@@ -46,6 +46,7 @@ class _PickupAndDropLocationScreenState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getCurrentAddress();
+      context.read<RideRequestProvider>().createIcons(context);
     });
   }
 
@@ -69,6 +70,10 @@ class _PickupAndDropLocationScreenState
         dropLocation,
         context,
       );
+      context.read<RideRequestProvider>().makeFareZero();
+      context.read<RideRequestProvider>().createIcons(context);
+      context.read<RideRequestProvider>().updateMarker();
+      context.read<RideRequestProvider>().getFare();
       context
           .read<RideRequestProvider>()
           .decodePolylineAndUpdatePolylineField();
