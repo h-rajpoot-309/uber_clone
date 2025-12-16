@@ -130,7 +130,7 @@ class RideRequestProvider extends ChangeNotifier {
     if (pickupIconForMap == null) {
       ImageConfiguration imageConfiguration = createLocalImageConfiguration(
         context,
-        size: const Size(2, 2),
+        size: const Size(32, 32),
       );
       BitmapDescriptor.fromAssetImage(
         imageConfiguration,
@@ -143,7 +143,7 @@ class RideRequestProvider extends ChangeNotifier {
     if (destinationIconForMap == null) {
       ImageConfiguration imageConfiguration = createLocalImageConfiguration(
         context,
-        size: const Size(2, 2),
+        size: const Size(48, 48),
       );
       BitmapDescriptor.fromAssetImage(
         imageConfiguration,
@@ -169,16 +169,22 @@ class RideRequestProvider extends ChangeNotifier {
   }
 
   updateMarker() async {
+    if (pickupIconForMap == null || destinationIconForMap == null) {
+      print("Icons not ready yet");
+      return;
+    }
     riderMarker.clear();
     Marker pickupMarker = Marker(
       markerId: const MarkerId('Pickup Marker'),
       position: LatLng(pickupLocation!.latitude!, pickupLocation!.longitude!),
       icon: pickupIconForMap!,
+      anchor: Offset(0.5, 1.0),
     );
     Marker destinationMarker = Marker(
       markerId: const MarkerId('Destination Marker'),
       position: LatLng(dropLocation!.latitude!, dropLocation!.longitude!),
       icon: destinationIconForMap!,
+      anchor: Offset(0.5, 1.0),
     );
     if (updateMarkerbool == true) {
       Marker carMarker = Marker(
