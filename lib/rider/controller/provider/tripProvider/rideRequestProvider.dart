@@ -23,6 +23,58 @@ class RideRequestProvider extends ChangeNotifier {
   bool updateMarkerbool = false;
   PickupNDropLocationModel? pickupLocation;
   PickupNDropLocationModel? dropLocation;
+  int uberGoFare = 0;
+  int uberGoSedanFare = 0;
+  int uberPremierFare = 0;
+  int uberXLFare = 0;
+
+  makeFareZero() {
+    int uberGoFare = 0;
+    int uberGoSedanFare = 0;
+    int uberPremierFare = 0;
+    int uberXLFare = 0;
+    notifyListeners();
+  }
+
+  getFare() {
+    int baseFare = 50;
+    int uberGoDistancePerKM = 12;
+    int uberGoSedanDistancePerKM = 15;
+    int uberPremierDistancePerKM = 17;
+    int uberXLDistancePerKM = 20;
+    int uberGoDurationPerMinute = 1;
+    int uberGoSedanDurationPerMinute = 2;
+    double uberPremierDurationPerMinute = 2.5;
+    int uberXLDurationPerMinute = 3;
+
+    uberGoFare =
+        (baseFare +
+                uberGoDistancePerKM *
+                    (directionDetails!.distanceInMeter / 1000) +
+                (uberGoDurationPerMinute * (directionDetails!.duration / 60)))
+            .round();
+    uberGoSedanFare =
+        (baseFare +
+                uberGoSedanDistancePerKM *
+                    (directionDetails!.distanceInMeter / 1000) +
+                (uberGoSedanDurationPerMinute *
+                    (directionDetails!.duration / 60)))
+            .round();
+    uberPremierFare =
+        (baseFare +
+                uberPremierDistancePerKM *
+                    (directionDetails!.distanceInMeter / 1000) +
+                (uberPremierDurationPerMinute *
+                    (directionDetails!.duration / 60)))
+            .round();
+    uberXLFare =
+        (baseFare +
+                uberXLDistancePerKM *
+                    (directionDetails!.distanceInMeter / 1000) +
+                (uberXLDurationPerMinute * (directionDetails!.duration / 60)))
+            .round();
+    notifyListeners();
+  }
 
   updateRidePickupAndDropLocation(
     PickupNDropLocationModel pickup,
@@ -112,6 +164,36 @@ class RideRequestProvider extends ChangeNotifier {
       ).then((icon) {
         carIconForMap = icon;
         notifyListeners();
+      });
+    }
+  }
+
+  updateMarker() async {
+    riderMarker.clear();
+    Marker pickupMarker = Marker(
+      markerId: const MarkerId('Pickup Marker'),
+      position: LatLng(pickupLocation!.latitude!, pickupLocation!.longitude!),
+      icon: pickupIconForMap!,
+    );
+    Marker destinationMarker = Marker(
+      markerId: const MarkerId('Destination Marker'),
+      position: LatLng(dropLocation!.latitude!, dropLocation!.longitude!),
+      icon: destinationIconForMap!,
+    );
+    if (updateMarkerbool == true) {
+      Marker carMarker = Marker(
+        markerId: const MarkerId('Car Marker'),
+        position: LatLng(pickupLocation!.latitude!, pickupLocation!.longitude!),
+        icon: carIconForMap!,
+      );
+      riderMarker.add(carMarker);
+    }
+    riderMarker.add(pickupMarker);
+    riderMarker.add(destinationMarker);
+    notifyListeners();
+    if (updateMarkerbool == true) {
+      await Future.delayed(const Duration(seconds: 5), () async {
+        await updateMarker();
       });
     }
   }
