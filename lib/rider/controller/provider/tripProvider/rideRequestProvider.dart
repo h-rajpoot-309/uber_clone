@@ -142,17 +142,6 @@ class RideRequestProvider extends ChangeNotifier {
 
   createIcons(BuildContext context) async {
     if (pickupIconForMap == null) {
-      // ImageConfiguration imageConfiguration = createLocalImageConfiguration(
-      //   context,
-      //   size: const Size(32, 32),
-      // );
-      // BitmapDescriptor.asset(
-      //   imageConfiguration,
-      //   'assets/images/icons/pickupPng.png',
-      // ).then((icon) {
-      //   pickupIconForMap = icon;
-      //   notifyListeners();
-      // });
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/icons/pickupPng.png',
         30,
@@ -162,17 +151,6 @@ class RideRequestProvider extends ChangeNotifier {
       notifyListeners();
     }
     if (destinationIconForMap == null) {
-      // ImageConfiguration imageConfiguration = createLocalImageConfiguration(
-      //   context,
-      //   size: const Size(48, 48),
-      // );
-      // BitmapDescriptor.asset(
-      //   imageConfiguration,
-      //   'assets/images/icons/dropPng.png',
-      // ).then((icon) {
-      //   destinationIconForMap = icon;
-      //   notifyListeners();
-      // });
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/icons/dropPng.png',
         35,
@@ -182,17 +160,6 @@ class RideRequestProvider extends ChangeNotifier {
       notifyListeners();
     }
     if (carIconForMap == null) {
-      // ImageConfiguration imageConfiguration = createLocalImageConfiguration(
-      //   context,
-      //   size: const Size(2, 2),
-      // );
-      // BitmapDescriptor.asset(
-      //   imageConfiguration,
-      //   'assets/images/vehicle/mapCar.png',
-      // ).then((icon) {
-      //   carIconForMap = icon;
-      //   notifyListeners();
-      // });
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/images/vehicle/mapCar.png',
         35,
