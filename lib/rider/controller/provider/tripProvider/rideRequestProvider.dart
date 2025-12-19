@@ -132,7 +132,7 @@ class RideRequestProvider extends ChangeNotifier {
         context,
         size: const Size(32, 32),
       );
-      BitmapDescriptor.fromAssetImage(
+      BitmapDescriptor.asset(
         imageConfiguration,
         'assets/images/icons/pickupPng.png',
       ).then((icon) {
@@ -145,7 +145,7 @@ class RideRequestProvider extends ChangeNotifier {
         context,
         size: const Size(48, 48),
       );
-      BitmapDescriptor.fromAssetImage(
+      BitmapDescriptor.asset(
         imageConfiguration,
         'assets/images/icons/dropPng.png',
       ).then((icon) {
@@ -158,7 +158,7 @@ class RideRequestProvider extends ChangeNotifier {
         context,
         size: const Size(2, 2),
       );
-      BitmapDescriptor.fromAssetImage(
+      BitmapDescriptor.asset(
         imageConfiguration,
         'assets/images/vehicle/mapCar.png',
       ).then((icon) {

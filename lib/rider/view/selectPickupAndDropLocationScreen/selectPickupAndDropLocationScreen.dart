@@ -71,7 +71,7 @@ class _PickupAndDropLocationScreenState
         context,
       );
       context.read<RideRequestProvider>().makeFareZero();
-      context.read<RideRequestProvider>().createIcons(context);
+      await context.read<RideRequestProvider>().createIcons(context);
       context.read<RideRequestProvider>().updateMarker();
       context.read<RideRequestProvider>().getFare();
       context
