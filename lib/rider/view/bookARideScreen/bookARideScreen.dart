@@ -5,7 +5,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:uber_clone/common/widgets/elevatedButtonCommon.dart';
 import 'package:uber_clone/constant/utils/colors.dart';
+import 'package:uber_clone/constant/utils/textStyles.dart';
 import 'package:uber_clone/rider/controller/provider/tripProvider/rideRequestProvider.dart';
 
 import '../../../common/controller/services/locationServices.dart';
@@ -20,7 +22,8 @@ class BookARideScreen extends StatefulWidget {
 class _BookARideScreenState extends State<BookARideScreen> {
   Completer<GoogleMapController> mapControllerDriver = Completer();
   GoogleMapController? mapController;
-
+  int selectedCarType = 0;
+  bool bookRideButtonPressed = false;
   @override
   void initState() {
     super.initState();
@@ -66,6 +69,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
   ];
 
   final panelController = PanelController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +87,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
                 );
               } else {
                 return ListView(
+                  physics: BouncingScrollPhysics(),
                   padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
                   children: [
                     Row(
@@ -96,33 +101,108 @@ class _BookARideScreenState extends State<BookARideScreen> {
                             color: greyShade3,
                           ),
                         ),
-                        SizedBox(height: 2.h),
-                        ListView.builder(
-                          itemCount: ridesList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Container(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 6.h,
-                                    width: 6.h,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.sp),
-                                      border: Border.all(color: Colors.black38),
-                                      color: Colors.white,
-                                      image: DecorationImage(
-                                        image: AssetImage(ridesList[0]),
-                                      ),
+                      ],
+                    ),
+                    SizedBox(height: 2.h),
+                    ListView.builder(
+                      itemCount: ridesList.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return InkWell(
+                          onTap: () {
+                            setState(() {
+                              selectedCarType = index;
+                            });
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(vertical: 0.5.h),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 1.h,
+                              horizontal: 3.w,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.sp),
+                              border: Border.all(
+                                color: index == selectedCarType
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                width: 2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 8.h,
+                                  width: 8.h,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.sp),
+                                    border: Border.all(color: Colors.black38),
+                                    color: Colors.white,
+                                    image: DecorationImage(
+                                      image: AssetImage(ridesList[index][0]),
                                     ),
                                   ),
-                                ],
+                                ),
+                                SizedBox(width: 3.w),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        getCarType(index),
+                                        style: AppTextStyles.body14Bold,
+                                      ),
+                                      SizedBox(width: 2.w),
+                                      Icon(Icons.person, color: Colors.black),
+                                      Text(ridesList[index][2]),
+                                    ],
+                                  ),
+                                ),
+                                Column(
+                                  children: [
+                                    Text(
+                                      'Rs. ${getFare(index).toString()}',
+                                      style: AppTextStyles.body14Bold,
+                                    ),
+                                    Text(
+                                      (getFare(index) * 1.15)
+                                          .round()
+                                          .toString(),
+                                      style: AppTextStyles.small12.copyWith(
+                                        decoration: TextDecoration.lineThrough,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 1.h),
+                    ElevatedButtonCommon(
+                      width: 94.w,
+                      height: 6.h,
+                      onPressed: () {},
+                      backgroundColor: Colors.black,
+                      child: Builder(
+                        builder: (context) {
+                          if (bookRideButtonPressed == true) {
+                            return CircularProgressIndicator(
+                              color: Colors.white,
+                            );
+                          } else {
+                            return Text(
+                              'Continue',
+                              style: AppTextStyles.body16Bold.copyWith(
+                                color: Colors.white,
                               ),
                             );
-                          },
-                        ),
-                      ],
+                          }
+                        },
+                      ),
                     ),
                   ],
                 );
