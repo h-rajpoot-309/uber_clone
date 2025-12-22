@@ -19,6 +19,7 @@ class NearbyDriverServices {
       if (event != null) {
         var callback = event['callback'];
         switch (callback) {
+          //driver entered the radius of pickupLocation
           case Geofire.onKeyEntered:
             NearByDriversModel model = NearByDriversModel(
               driverID: event['key'],
@@ -30,6 +31,7 @@ class NearbyDriverServices {
               context.read<RideRequestProvider>().updateMarker();
             }
             break;
+          //driver exited the radius of pickupLocation
           case Geofire.onKeyExited:
             context.read<RideRequestProvider>().removeDriver(
               event['key'].toString(),
@@ -37,6 +39,7 @@ class NearbyDriverServices {
             context.read<RideRequestProvider>().updateMarker();
             log('Driver Removed ${event['key']}');
             break;
+          //driver moved the radius of pickupLocation
           case Geofire.onKeyMoved:
             NearByDriversModel model = NearByDriversModel(
               driverID: event['key'],
