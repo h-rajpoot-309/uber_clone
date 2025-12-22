@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,10 +7,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:uber_clone/common/controller/provider/profileDataProvider.dart';
+import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/common/widgets/elevatedButtonCommon.dart';
 import 'package:uber_clone/constant/utils/colors.dart';
 import 'package:uber_clone/constant/utils/textStyles.dart';
 import 'package:uber_clone/rider/controller/provider/tripProvider/rideRequestProvider.dart';
+import 'package:uber_clone/rider/controller/services/rideRequestServices/rideRequestServices.dart';
 
 import '../../../common/controller/services/locationServices.dart';
 
@@ -80,11 +84,12 @@ class _BookARideScreenState extends State<BookARideScreen> {
           if (bookRideButtonPressed == true) {
             return Column(
               children: [
+                SizedBox(height: 5.h),
                 CircularProgressIndicator(color: Colors.black),
                 SizedBox(height: 5.h),
                 Container(
-                  height: 10.h,
-                  width: 10.h,
+                  height: 8.h,
+                  width: 8.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.black38, width: 2),
@@ -93,7 +98,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
                   child: Icon(
                     CupertinoIcons.xmark,
                     color: Colors.black,
-                    size: 7.h,
+                    size: 6.h,
                   ),
                 ),
                 SizedBox(height: 2.h),
@@ -222,7 +227,31 @@ class _BookARideScreenState extends State<BookARideScreen> {
                       ElevatedButtonCommon(
                         width: 94.w,
                         height: 6.h,
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            bookRideButtonPressed = true;
+                          });
+                          RideRequestModel model = RideRequestModel(
+                            rideCreateTime: DateTime.now(),
+                            riderProfile: context
+                                .read<ProfileDataProvider>()
+                                .profileData!,
+                            pickupLocation: context
+                                .read<RideRequestProvider>()
+                                .pickupLocation!,
+                            dropLocation: context
+                                .read<RideRequestProvider>()
+                                .dropLocation!,
+                            fare: getFare(selectedCarType).toString(),
+                            carType: getCarType(selectedCarType),
+                            rideStatus: RideRequestServices.getRideStatus(0),
+                            otp: math.Random().nextInt(9999).toString(),
+                          );
+                          RideRequestServices.createNewRideRequest(
+                            model,
+                            context,
+                          );
+                        },
                         backgroundColor: Colors.black,
                         child: Builder(
                           builder: (context) {
