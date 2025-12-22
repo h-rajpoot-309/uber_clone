@@ -198,11 +198,8 @@ class RideRequestProvider extends ChangeNotifier {
       for (var driver in nearbyDrivers) {
         double rotaion = random.nextInt(360).toDouble();
         Marker carMarker = Marker(
-          markerId: const MarkerId('Car Marker'),
-          position: LatLng(
-            pickupLocation!.latitude!,
-            pickupLocation!.longitude!,
-          ),
+          markerId: MarkerId(driver.driverID),
+          position: LatLng(driver.latitude!, driver.longitude!),
           icon: carIconForMap!,
         );
         riderMarker.add(carMarker);

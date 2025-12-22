@@ -31,6 +31,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
   GoogleMapController? mapController;
   int selectedCarType = 0;
   bool bookRideButtonPressed = false;
+
   @override
   void initState() {
     super.initState();
@@ -241,6 +242,7 @@ class _BookARideScreenState extends State<BookARideScreen> {
                           setState(() {
                             bookRideButtonPressed = true;
                           });
+                          //creating a ride request to store on the database so that drivers can view the request
                           RideRequestModel model = RideRequestModel(
                             rideCreateTime: DateTime.now(),
                             riderProfile: context
