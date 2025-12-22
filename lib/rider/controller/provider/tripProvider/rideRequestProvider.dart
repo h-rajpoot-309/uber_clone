@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:uber_clone/common/model/pickupNDropLocationModel.dart';
 import 'package:flutter/services.dart';
+import 'package:uber_clone/rider/model/nearbyDriversModel.dart';
 
 import '../../../../common/model/directionModel.dart';
 
@@ -29,6 +31,9 @@ class RideRequestProvider extends ChangeNotifier {
   int uberGoSedanFare = 0;
   int uberPremierFare = 0;
   int uberXLFare = 0;
+  //Fetch Nearby Drivers List
+  bool fetchNearbyDriver = false;
+  List<NearByDriversModel> nearbyDrivers = [];
 
   makeFareZero() {
     int uberGoFare = 0;
@@ -188,6 +193,21 @@ class RideRequestProvider extends ChangeNotifier {
       icon: destinationIconForMap!,
       anchor: Offset(0.5, 1.0),
     );
+    if (fetchNearbyDriver == true) {
+      math.Random random = math.Random();
+      for (var driver in nearbyDrivers) {
+        double rotaion = random.nextInt(360).toDouble();
+        Marker carMarker = Marker(
+          markerId: const MarkerId('Car Marker'),
+          position: LatLng(
+            pickupLocation!.latitude!,
+            pickupLocation!.longitude!,
+          ),
+          icon: carIconForMap!,
+        );
+        riderMarker.add(carMarker);
+      }
+    }
     if (updateMarkerbool == true) {
       Marker carMarker = Marker(
         markerId: const MarkerId('Car Marker'),
@@ -204,5 +224,33 @@ class RideRequestProvider extends ChangeNotifier {
         await updateMarker();
       });
     }
+  }
+
+  //Nearby Drivers Functions
+  addDriver(NearByDriversModel driver) {
+    nearbyDrivers.add(driver);
+    notifyListeners();
+  }
+
+  removeDriver(String driverID) {
+    int index = nearbyDrivers.indexWhere(
+      (element) => element.driverID == driverID,
+    );
+    nearbyDrivers.remove(index);
+    notifyListeners();
+  }
+
+  updateFetchNearbyDrivers(bool newStatus) {
+    fetchNearbyDriver = newStatus;
+    notifyListeners();
+  }
+
+  updateNearbyLocation(NearByDriversModel driver) {
+    int index = nearbyDrivers.indexWhere(
+      (element) => element.driverID == driver.driverID,
+    );
+    nearbyDrivers[index].longitude = driver.longitude;
+    nearbyDrivers[index].latitude = driver.latitude;
+    notifyListeners();
   }
 }

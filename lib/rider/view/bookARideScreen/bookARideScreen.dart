@@ -8,11 +8,13 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:uber_clone/common/controller/provider/profileDataProvider.dart';
+import 'package:uber_clone/common/model/pickupNDropLocationModel.dart';
 import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/common/widgets/elevatedButtonCommon.dart';
 import 'package:uber_clone/constant/utils/colors.dart';
 import 'package:uber_clone/constant/utils/textStyles.dart';
 import 'package:uber_clone/rider/controller/provider/tripProvider/rideRequestProvider.dart';
+import 'package:uber_clone/rider/controller/services/nearbyDriverServices/nearbyDriverServices.dart';
 import 'package:uber_clone/rider/controller/services/rideRequestServices/rideRequestServices.dart';
 
 import '../../../common/controller/services/locationServices.dart';
@@ -32,7 +34,15 @@ class _BookARideScreenState extends State<BookARideScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<RideRequestProvider>().updateFetchNearbyDrivers(true);
+      context.read<RideRequestProvider>().updateUpdateMarkerBool(true);
+      PickupNDropLocationModel pickup = context
+          .read<RideRequestProvider>()
+          .pickupLocation!;
+      LatLng pickupLocation = LatLng(pickup.latitude!, pickup.longitude!);
+      await NearbyDriverServices.getNearbyDrivers(pickupLocation, context);
+    });
   }
 
   int getFare(int index) {
