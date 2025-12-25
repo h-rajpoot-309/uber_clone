@@ -24,7 +24,7 @@ class PushNotificationServices {
       );
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         if (message.notification != null) {
-          firebaseMessagingForegroundHandlerDriver(message);
+          firebaseMessagingForegroundHandlerDriver(message, context);
         }
       });
     } else {
@@ -62,8 +62,10 @@ class PushNotificationServices {
 
   static Future<void> firebaseMessagingForegroundHandlerDriver(
     RemoteMessage message,
+    BuildContext context,
   ) async {
     String rideID = getRideRequestID(message);
+    fetchRideRequestInfo(rideID, context);
   }
 
   static Future getToken(ProfileDataModel model) async {
@@ -94,5 +96,24 @@ class PushNotificationServices {
         .onError((error, stackTrace) {
           throw Exception(error);
         });
+  }
+
+  static subscribeToNotification(ProfileDataModel model) {
+    if (model.userType == 'PARTNER') {
+      firebaseMessaging.subscribeToTopic('PARTNER');
+      firebaseMessaging.subscribeToTopic('USER');
+    } else {
+      firebaseMessaging.subscribeToTopic('CUSTOMER');
+      firebaseMessaging.subscribeToTopic('USER');
+    }
+  }
+
+  static initializeFirebaseMessagingForUsers(
+    ProfileDataModel model,
+    BuildContext context,
+  ) {
+    initializeFirebaseMessaging(model, context);
+    getToken(model);
+    subscribeToNotification(model);
   }
 }

@@ -5,7 +5,9 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:uber_clone/common/controller/provider/authProvide.dart';
 import 'package:uber_clone/common/controller/provider/profileDataProvider.dart';
+import 'package:uber_clone/common/controller/services/firebasePushNotificationServices/pushNotificationServices.dart';
 import 'package:uber_clone/common/controller/services/profileDataCRUDServices.dart';
+import 'package:uber_clone/common/model/profileDataModel.dart';
 import 'package:uber_clone/common/view/SignInLogic/signInLogic.dart';
 import 'package:uber_clone/common/view/authScreens/loginScreen.dart';
 import 'package:uber_clone/common/view/authScreens/otpScreen.dart';
@@ -101,6 +103,15 @@ class MobileAuthServices {
     print('user reg check start');
     // check if the user is registered, if it is then go to rider/driver screen else registration screen
     if (userIsRegistered == true) {
+      //initializing background and foreground messaging for driver and rider as soon as we land on home screen
+      ProfileDataModel profileData =
+          await ProfileDataCRUDServices.getProfileDataFromRealTimeDatabase(
+            auth.currentUser!.phoneNumber!,
+          );
+      PushNotificationServices.initializeFirebaseMessagingForUsers(
+        profileData,
+        context,
+      );
       bool userIsDriver = await ProfileDataCRUDServices.userIsDriver(context);
       // check if user is driver or rider and go to respective screen
       if (userIsDriver == true) {
