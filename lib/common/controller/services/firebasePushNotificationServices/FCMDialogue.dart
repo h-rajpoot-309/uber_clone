@@ -19,7 +19,7 @@ class PushNotificationDialogue {
       builder: (context) {
         audioPlayer.setAsset('assets/sound/alert.mp3');
         audioPlayer.play();
-        RideRequestServicesDriver.checkRideAavailability(
+        RideRequestServicesDriver.checkRideAvailability(
           context,
           rideRequestModel.riderProfile.mobileNumber!,
         );
