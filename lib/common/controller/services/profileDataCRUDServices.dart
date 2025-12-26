@@ -19,6 +19,7 @@ class ProfileDataCRUDServices {
         ProfileDataModel userModel = ProfileDataModel.fromMap(
           jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
         );
+        log('profile data crud: ${userModel.toMap().toString()}');
         return userModel;
       }
     } catch (e) {

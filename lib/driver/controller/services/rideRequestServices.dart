@@ -1,0 +1,89 @@
+import 'dart:convert';
+
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:uber_clone/common/controller/services/toastService.dart';
+import 'package:uber_clone/common/model/rideRequestModel.dart';
+import 'package:uber_clone/constant/constants.dart';
+
+class RideRequestServicesDriver {
+  static getRideStatus(int rideStatusNum) {
+    switch (rideStatusNum) {
+      case 0:
+        return 'WAITING_FOR_RIDE_REQUEST';
+      case 1:
+        return 'WAITING_FOR_DRIVER_TO_ARRIVE';
+      case 2:
+        return 'MOVING_TOWARDS_DESTINATION';
+      case 3:
+        return 'RIDE_COMPLETED';
+    }
+  }
+
+  static checkRideAavailability(BuildContext context, String rideID) async {
+    DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
+      'RideRequest/$rideID}',
+    );
+    final snapshot = await tripRef.get();
+    if (snapshot.exists) {
+      Stream<DatabaseEvent> stream = tripRef.onValue;
+      stream.listen((event) async {
+        final checkSnapshotExists = await tripRef.get();
+        if (checkSnapshotExists.exists) {
+          RideRequestModel rideRequestModel = RideRequestModel.fromMap(
+            jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
+          );
+          if (rideRequestModel.driverProfile != null) {
+            audioPlayer.stop();
+            Navigator.pop(context);
+            ToastService.sendScaffoldAlert(
+              msg: 'Oops! Trip accepted by someone else',
+              toastStatus: 'ERROR',
+              context: context,
+            );
+          }
+        } else {
+          audioPlayer.stop();
+          Navigator.pop(context);
+          ToastService.sendScaffoldAlert(
+            msg: 'Oops! Ride was Cancelled',
+            toastStatus: 'ERROR',
+            context: context,
+          );
+        }
+      });
+    } else {
+      Navigator.pop(context);
+    }
+  }
+
+  static getRiderRequestData(String rideID) async {
+    DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
+      'RideRequest/$rideID}',
+    );
+    final snapshot = await tripRef.get();
+    if (snapshot.exists) {
+      RideRequestModel rideRequestModel = RideRequestModel.fromMap(
+        jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
+      );
+      return rideRequestModel;
+    }
+  }
+
+  static updateRideRequestStatus(
+    String rideRequestStatus,
+    String rideID,
+  ) async {
+    DatabaseReference tripRef = FirebaseDatabase.instance.ref().child(
+      'RideRequest/$rideID/rideStatus}',
+    );
+    tripRef.set(rideRequestStatus);
+  }
+
+  static updateRudeRequestID(String rideID) {
+    DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
+      'User/${auth.currentUser!.phoneNumber!}/activeRideRequestID',
+    );
+    tripRef.set(rideID);
+  }
+}

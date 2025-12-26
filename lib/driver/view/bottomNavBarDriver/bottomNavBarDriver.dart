@@ -10,6 +10,11 @@ import 'package:uber_clone/rider/view/activity/activityScreen.dart';
 import 'package:uber_clone/rider/view/homeScreen/riderHomeScreen.dart';
 import 'package:uber_clone/rider/view/serviceScreen/serviceScreen.dart';
 
+import '../../../common/controller/services/firebasePushNotificationServices/pushNotificationServices.dart';
+import '../../../common/controller/services/profileDataCRUDServices.dart';
+import '../../../common/model/profileDataModel.dart';
+import '../../../constant/constants.dart';
+
 class BottomNavBarDriver extends StatefulWidget {
   const BottomNavBarDriver({super.key});
 
@@ -24,6 +29,17 @@ class _BottomNavBarDriverState extends State<BottomNavBarDriver> {
     super.initState();
     // Initialize with the first tab (index 0)
     _controller = PersistentTabController(initialIndex: 0);
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      ProfileDataModel profileData =
+          await ProfileDataCRUDServices.getProfileDataFromRealTimeDatabase(
+            auth.currentUser!.phoneNumber!,
+          );
+      PushNotificationServices.initializeFirebaseMessagingForUsers(
+        profileData,
+        context,
+      );
+    });
   }
 
   //list of screens

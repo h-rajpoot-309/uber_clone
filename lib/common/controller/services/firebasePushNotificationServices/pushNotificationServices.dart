@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:uber_clone/common/controller/services/firebasePushNotificationServices/FCMDialogue.dart';
 import 'package:uber_clone/common/model/profileDataModel.dart';
 import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/rider/view/homeScreen/riderHomeScreen.dart';
@@ -19,18 +20,24 @@ class PushNotificationServices {
   ) async {
     await firebaseMessaging.requestPermission();
     if (profileData.userType == 'PARTNER') {
+      // if the driver app is closed
       FirebaseMessaging.onBackgroundMessage(
         firebaseMessagingBackgroundHandlerDriver,
       );
+      // if the driver app is  open
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         if (message.notification != null) {
+          log('Got a message whilst in the foreground!');
+          log('Message data: ${message.data}');
           firebaseMessagingForegroundHandlerDriver(message, context);
         }
       });
     } else {
+      // if the rider app is closed
       FirebaseMessaging.onBackgroundMessage(
         firebaseMessagingBackgroundHandlerRider,
       );
+      // if the rider app is open
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         if (message.notification != null) {
           firebaseMessagingForegroundHandlerRider(message);
@@ -89,8 +96,14 @@ class PushNotificationServices {
               jsonDecode(jsonEncode(databaseEvent.snapshot.value))
                   as Map<String, dynamic>,
             );
-            log(rideRequestModel.toMap().toString());
+            log(
+              'In fetch ride request info: ${rideRequestModel.toMap().toString()}',
+            );
             //show a dialogue to accept ride request
+            PushNotificationDialogue.rideRequestDialogue(
+              rideRequestModel,
+              context,
+            );
           }
         })
         .onError((error, stackTrace) {
@@ -112,6 +125,7 @@ class PushNotificationServices {
     ProfileDataModel model,
     BuildContext context,
   ) {
+    log('In init Firebase Messaging');
     initializeFirebaseMessaging(model, context);
     getToken(model);
     subscribeToNotification(model);

@@ -108,10 +108,10 @@ class MobileAuthServices {
           await ProfileDataCRUDServices.getProfileDataFromRealTimeDatabase(
             auth.currentUser!.phoneNumber!,
           );
-      PushNotificationServices.initializeFirebaseMessagingForUsers(
-        profileData,
-        context,
-      );
+      // PushNotificationServices.initializeFirebaseMessagingForUsers(
+      //   profileData,
+      //   context,
+      // );
       bool userIsDriver = await ProfileDataCRUDServices.userIsDriver(context);
       // check if user is driver or rider and go to respective screen
       if (userIsDriver == true) {
