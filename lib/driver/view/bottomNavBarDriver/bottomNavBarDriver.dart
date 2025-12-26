@@ -29,7 +29,6 @@ class _BottomNavBarDriverState extends State<BottomNavBarDriver> {
     super.initState();
     // Initialize with the first tab (index 0)
     _controller = PersistentTabController(initialIndex: 0);
-    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       ProfileDataModel profileData =
           await ProfileDataCRUDServices.getProfileDataFromRealTimeDatabase(

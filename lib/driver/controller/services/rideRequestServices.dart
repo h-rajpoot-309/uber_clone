@@ -20,7 +20,7 @@ class RideRequestServicesDriver {
     }
   }
 
-  static checkRideAvailability(BuildContext context, String rideID) async {
+  static checkRideAavailability(BuildContext context, String rideID) async {
     DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
       'RideRequest/$rideID}',
     );
