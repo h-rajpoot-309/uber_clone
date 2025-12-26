@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,43 +18,6 @@ class RideRequestServicesDriver {
         return 'MOVING_TOWARDS_DESTINATION';
       case 3:
         return 'RIDE_COMPLETED';
-    }
-  }
-
-  static checkRideAavailability(BuildContext context, String rideID) async {
-    DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
-      'RideRequest/$rideID}',
-    );
-    final snapshot = await tripRef.get();
-    if (snapshot.exists) {
-      Stream<DatabaseEvent> stream = tripRef.onValue;
-      stream.listen((event) async {
-        final checkSnapshotExists = await tripRef.get();
-        if (checkSnapshotExists.exists) {
-          RideRequestModel rideRequestModel = RideRequestModel.fromMap(
-            jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
-          );
-          if (rideRequestModel.driverProfile != null) {
-            audioPlayer.stop();
-            Navigator.pop(context);
-            ToastService.sendScaffoldAlert(
-              msg: 'Oops! Trip accepted by someone else',
-              toastStatus: 'ERROR',
-              context: context,
-            );
-          }
-        } else {
-          audioPlayer.stop();
-          Navigator.pop(context);
-          ToastService.sendScaffoldAlert(
-            msg: 'Oops! Ride was Cancelled',
-            toastStatus: 'ERROR',
-            context: context,
-          );
-        }
-      });
-    } else {
-      Navigator.pop(context);
     }
   }
 
@@ -85,5 +49,45 @@ class RideRequestServicesDriver {
       'User/${auth.currentUser!.phoneNumber!}/activeRideRequestID',
     );
     tripRef.set(rideID);
+  }
+
+  static checkRideAavailability(BuildContext context, String rideID) async {
+    DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
+      'RideRequest/$rideID',
+    );
+    final snapshot = await tripRef.get();
+    if (snapshot.exists) {
+      Stream<DatabaseEvent> stream = tripRef.onValue;
+      stream.listen((event) async {
+        final checkSnapshotExists = await tripRef.get();
+        if (checkSnapshotExists.exists) {
+          RideRequestModel rideRequestModel = RideRequestModel.fromMap(
+            jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
+          );
+          if (rideRequestModel.driverProfile != null) {
+            log('Someone else accepted');
+            audioPlayer.stop();
+            Navigator.pop(context);
+            ToastService.sendScaffoldAlert(
+              msg: 'Oops! Trip accepted by someone else',
+              toastStatus: 'ERROR',
+              context: context,
+            );
+          }
+        } else {
+          log('Ride Cancelled');
+          audioPlayer.stop();
+          Navigator.pop(context);
+          ToastService.sendScaffoldAlert(
+            msg: 'Oops! Ride was Cancelled',
+            toastStatus: 'ERROR',
+            context: context,
+          );
+        }
+      });
+    } else {
+      log('Ride Request Didnt Exist');
+      Navigator.pop(context);
+    }
   }
 }

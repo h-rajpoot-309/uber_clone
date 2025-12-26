@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:uber_clone/common/controller/services/firebasePushNotificationServices/FCMDialogue.dart';
 import 'package:uber_clone/common/model/profileDataModel.dart';
 import 'package:uber_clone/common/model/rideRequestModel.dart';
+import 'package:uber_clone/main.dart';
 import 'package:uber_clone/rider/view/homeScreen/riderHomeScreen.dart';
 
 import '../../../../constant/constants.dart';
@@ -85,9 +86,12 @@ class PushNotificationServices {
   }
 
   static fetchRideRequestInfo(String rideID, BuildContext context) {
+    log('Fetch Ride Request Info entry');
     DatabaseReference ref = FirebaseDatabase.instance.ref().child(
       'RideRequest/$rideID',
     );
+    log('reference fetched');
+    // fetch teh ride request model from db
     ref
         .once()
         .then((databaseEvent) {
@@ -102,7 +106,11 @@ class PushNotificationServices {
             //show a dialogue to accept ride request
             PushNotificationDialogue.rideRequestDialogue(
               rideRequestModel,
-              context,
+              navigatorKey.currentContext!,
+            );
+          } else {
+            log(
+              'ERROR: Snapshot value is NULL - Check if rideID exists in database',
             );
           }
         })

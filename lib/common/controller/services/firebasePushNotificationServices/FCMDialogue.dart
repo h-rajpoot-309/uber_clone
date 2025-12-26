@@ -6,6 +6,7 @@ import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/constant/constants.dart';
 import 'package:uber_clone/constant/utils/textStyles.dart';
 import 'package:uber_clone/driver/controller/services/rideRequestServices.dart';
+import 'package:uber_clone/main.dart';
 
 import '../../../../constant/utils/colors.dart';
 
@@ -14,10 +15,12 @@ class PushNotificationDialogue {
     RideRequestModel rideRequestModel,
     BuildContext context,
   ) {
+    final ctx = navigatorKey.currentContext!;
     return showDialog(
-      context: context,
+      context: ctx,
+      barrierDismissible: false,
       builder: (context) {
-        audioPlayer.setAsset('assets/sound/alert.mp3');
+        audioPlayer.setAsset('assets/sounds/alert.mp3');
         audioPlayer.play();
         RideRequestServicesDriver.checkRideAavailability(
           context,

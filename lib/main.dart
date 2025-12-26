@@ -21,6 +21,8 @@ import 'package:uber_clone/rider/view/serviceScreen/serviceScreen.dart';
 import 'package:uber_clone/rider/view/account/accountScreenRider.dart';
 import 'package:uber_clone/rider/view/activity/activityScreen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // try {
@@ -85,6 +87,7 @@ class _UberState extends State<Uber> {
             ),
           ],
           child: MaterialApp(
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               appBarTheme: const AppBarTheme(color: Colors.white, elevation: 0),
