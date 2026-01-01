@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:uber_clone/common/controller/provider/profileDataProvider.dart';
 import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/constant/constants.dart';
 import 'package:uber_clone/constant/utils/textStyles.dart';
 import 'package:uber_clone/driver/controller/services/rideRequestServices.dart';
-import 'package:uber_clone/main.dart';
 
 import '../../../../constant/utils/colors.dart';
 
@@ -15,11 +16,10 @@ class PushNotificationDialogue {
     RideRequestModel rideRequestModel,
     BuildContext context,
   ) {
-    final ctx = navigatorKey.currentContext!;
     return showDialog(
-      context: ctx,
+      context: context,
       barrierDismissible: false,
-      builder: (context) {
+      builder: (dialogContext) {
         audioPlayer.setAsset('assets/sounds/alert.mp3');
         audioPlayer.play();
         RideRequestServicesDriver.checkRideAvailability(
@@ -127,7 +127,24 @@ class PushNotificationDialogue {
                   activeTrackColor: greyShade3,
                   elevationThumb: 2,
                   elevationTrack: 2,
-                  onSwipe: () {},
+                  onSwipe: () async {
+                    await RideRequestServicesDriver.acceptRideRequest(
+                      rideRequestModel.riderProfile.mobileNumber!,
+                      context,
+                    );
+                    RideRequestServicesDriver.updateRideRequestStatus(
+                      RideRequestServicesDriver.getRideStatus(1),
+                      rideRequestModel.riderProfile.mobileNumber!,
+                    );
+                    RideRequestServicesDriver.updateRideRequestID(
+                      rideRequestModel.riderProfile.mobileNumber!,
+                    );
+                    audioPlayer.stop();
+                    if (Navigator.canPop(dialogContext)) {
+                      Navigator.pop(dialogContext); // just close dialog
+                    }
+                    // Navigator.pop(context);
+                  },
                   child: Builder(
                     builder: (context) {
                       return Text('Accept', style: AppTextStyles.body16Bold);

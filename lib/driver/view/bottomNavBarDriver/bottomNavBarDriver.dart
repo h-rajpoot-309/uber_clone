@@ -5,6 +5,7 @@ import 'package:uber_clone/constant/utils/colors.dart';
 import 'package:uber_clone/driver/view/accountScreenDriver/accountScreenDriver.dart';
 import 'package:uber_clone/driver/view/activityScreenDriver/activityScreenDriver.dart';
 import 'package:uber_clone/driver/view/homeScreenDriver/driverHomeScreen.dart';
+import 'package:uber_clone/driver/view/homeScreenDriver/driverHomeScreenBuilder.dart';
 import 'package:uber_clone/rider/view/account/accountScreenRider.dart';
 import 'package:uber_clone/rider/view/activity/activityScreen.dart';
 import 'package:uber_clone/rider/view/homeScreen/riderHomeScreen.dart';
@@ -43,13 +44,13 @@ class _BottomNavBarDriverState extends State<BottomNavBarDriver> {
 
   //list of screens
   List<Widget> screens = [
-    HomeScreenDriver(),
+    HomeScreenBuilder(),
     ActivityScreenDriver(),
     AccountScreenDriver(),
   ];
   final List<PersistentTabConfig> tabs = [
     PersistentTabConfig(
-      screen: const HomeScreenDriver(),
+      screen: const HomeScreenBuilder(),
       item: ItemConfig(
         icon: const Icon(Icons.home),
         title: "Home",

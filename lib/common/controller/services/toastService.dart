@@ -12,6 +12,9 @@ class ToastService {
     required String toastStatus,
     required BuildContext context,
   }) {
+    // DEBUG: verify which widget this context belongs to
+    debugPrint('ToastService context widget: ${context.widget.runtimeType}');
+
     showToastWidget(
       Container(
         margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
@@ -49,9 +52,11 @@ class ToastService {
           ],
         ),
       ),
+
+      context: context,
+
       animation: StyledToastAnimation.slideFromTop,
       reverseAnimation: StyledToastAnimation.slideFromTop,
-      context: context,
       duration: const Duration(seconds: 5),
       position: StyledToastPosition.top,
     );

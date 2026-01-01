@@ -1,10 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:uber_clone/common/controller/provider/profileDataProvider.dart';
 import 'package:uber_clone/common/controller/services/toastService.dart';
+import 'package:uber_clone/common/model/profileDataModel.dart';
 import 'package:uber_clone/common/model/rideRequestModel.dart';
 import 'package:uber_clone/constant/constants.dart';
+
+import '../../../main.dart';
 
 class RideRequestServicesDriver {
   static getRideStatus(int rideStatusNum) {
@@ -22,7 +28,7 @@ class RideRequestServicesDriver {
 
   static checkRideAvailability(BuildContext context, String rideID) async {
     DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
-      'RideRequest/$rideID}',
+      'RideRequest/$rideID',
     );
     final snapshot = await tripRef.get();
     if (snapshot.exists) {
@@ -59,7 +65,7 @@ class RideRequestServicesDriver {
 
   static getRiderRequestData(String rideID) async {
     DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
-      'RideRequest/$rideID}',
+      'RideRequest/$rideID',
     );
     final snapshot = await tripRef.get();
     if (snapshot.exists) {
@@ -75,15 +81,41 @@ class RideRequestServicesDriver {
     String rideID,
   ) async {
     DatabaseReference tripRef = FirebaseDatabase.instance.ref().child(
-      'RideRequest/$rideID/rideStatus}',
+      'RideRequest/$rideID/rideStatus',
     );
     tripRef.set(rideRequestStatus);
   }
 
-  static updateRudeRequestID(String rideID) {
+  static updateRideRequestID(String rideID) {
     DatabaseReference? tripRef = FirebaseDatabase.instance.ref().child(
       'User/${auth.currentUser!.phoneNumber!}/activeRideRequestID',
     );
     tripRef.set(rideID);
+  }
+
+  static acceptRideRequest(String rideID, BuildContext context) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref().child(
+      'RideRequest/$rideID/driverProfile',
+    );
+    ProfileDataModel profileData = context
+        .read<ProfileDataProvider>()
+        .profileData!;
+    ref
+        .set(profileData.toMap())
+        .then((value) {
+          ToastService.sendScaffoldAlert(
+            msg: 'Ride Request Registered Successfully',
+            toastStatus: 'SUCCESS',
+            context: context,
+          );
+        })
+        .onError((error, stackTrace) {
+          ToastService.sendScaffoldAlert(
+            msg: 'Oops! Unable to accept ride',
+            toastStatus: 'ERROR',
+            context: context,
+          );
+          throw Exception(error);
+        });
   }
 }

@@ -106,7 +106,7 @@ class PushNotificationServices {
             //show a dialogue to accept ride request
             PushNotificationDialogue.rideRequestDialogue(
               rideRequestModel,
-              navigatorKey.currentContext!,
+              context,
             );
           } else {
             log(
